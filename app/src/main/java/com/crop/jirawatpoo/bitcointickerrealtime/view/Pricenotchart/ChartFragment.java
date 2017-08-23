@@ -1,6 +1,7 @@
 package com.crop.jirawatpoo.bitcointickerrealtime.view.Pricenotchart;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,11 +33,17 @@ public class ChartFragment extends Fragment implements IAllView{
     private Runnable mTimer2;
     private LineGraphSeries<DataPoint> mSeries1;
     private LineGraphSeries<DataPoint> mSeries2;
+    private LineGraphSeries<DataPoint> mSeries3;
     private double graph2LastXValue = 5d;
     private static final String TAG = "ChartFragment";
     int count = 300;
     DataPoint[] values = new DataPoint[10];
+    DataPoint[] values2 = new DataPoint[10];
+    DataPoint[] values3 = new DataPoint[10];
+
     int i = 0;
+    int j = 0;
+    int k = 0;
     GraphView graph;
 
     public ChartFragment() {
@@ -69,22 +76,60 @@ public class ChartFragment extends Fragment implements IAllView{
             @Override
             public void onResponse(Call<pricerespone> call, Response<pricerespone> response) {
                 int save = i;
-                i = 9;
+                int save1 = j;
+                int save2 = k;
+                i = 0;
+                j = 0;
+                k = 0;
+
                 for(pricerespone.TradesBean tradesBean : response.body().getTrades()){
                     double x = i;
                     double y = Double.parseDouble(tradesBean.getRate());
                     DataPoint v = new DataPoint(x, y);
-                    values[i--] = v;
+                    values[i++] = v;
 
                 }
+
+                for(pricerespone.LowaskBean lowaskBean : response.body().getLowask()){
+                    double x = j;
+                    double y = Double.parseDouble(lowaskBean.getRate());
+                    DataPoint v = new DataPoint(x, y);
+                    values2[j++] = v;
+                }
+                for(pricerespone.HighbidBean highbidBean : response.body().getHighbid()){
+                    double x = k;
+                    double y = Double.parseDouble(highbidBean.getRate());
+                    DataPoint v = new DataPoint(x, y);
+                    values3[k++] = v;
+                }
+
+
                 if(save == 0){
                     mSeries1 = new LineGraphSeries<>(values);
                     graph.addSeries(mSeries1);
                 }else{
                     mSeries1.resetData(values);
                 }
+                if(save1 == 0){
+                    mSeries2 = new LineGraphSeries<>(values2);
+                    mSeries2.setColor(Color.GREEN);
+                    graph.addSeries(mSeries2);
+                }else{
+                    mSeries2.resetData(values2);
+                }
+                if(save2 == 0){
+                    mSeries3 = new LineGraphSeries<>(values3);
+                    mSeries3.setColor(Color.RED);
+                    graph.addSeries(mSeries3);
+                }else{
+                    mSeries3.resetData(values3);
+                }
+
+
+
                 mHandler.removeCallbacks(mTimer1);
                 mHandler.postDelayed(mTimer1, 1000);
+
 
             }
 
