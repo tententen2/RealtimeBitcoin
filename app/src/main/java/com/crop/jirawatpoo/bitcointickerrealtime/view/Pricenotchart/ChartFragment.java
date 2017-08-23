@@ -11,16 +11,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.crop.jirawatpoo.bitcointickerrealtime.R;
 import com.crop.jirawatpoo.bitcointickerrealtime.dao.Pricecheck.pricerespone;
 import com.crop.jirawatpoo.bitcointickerrealtime.http.HttpProvider;
 import com.crop.jirawatpoo.bitcointickerrealtime.http.service.ServicecallPrice;
 import com.crop.jirawatpoo.bitcointickerrealtime.interfaceclass.IAllView;
+import com.google.android.gms.ads.MobileAds;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.text.DecimalFormat;
 import java.util.Random;
 
 import retrofit2.Call;
@@ -36,10 +39,18 @@ public class ChartFragment extends Fragment implements IAllView{
     private LineGraphSeries<DataPoint> mSeries3;
     private double graph2LastXValue = 5d;
     private static final String TAG = "ChartFragment";
+    private TextView currentPrice1;
+    private TextView volume1;
+    private TextView currentPrice2;
+    private TextView volume2;
+    private TextView currentPrice3;
+    private TextView volume3;
     int count = 300;
     DataPoint[] values = new DataPoint[10];
     DataPoint[] values2 = new DataPoint[10];
     DataPoint[] values3 = new DataPoint[10];
+    DecimalFormat df = new DecimalFormat("#0.00");
+
 
     int i = 0;
     int j = 0;
@@ -58,15 +69,29 @@ public class ChartFragment extends Fragment implements IAllView{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         if (getArguments() != null) {
         }
+    }
+
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_chart, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        graph = (GraphView) view.findViewById(R.id.graph);
+        graph = view.findViewById(R.id.graph);
+        currentPrice1 = view.findViewById(R.id.CurrentPrice);
+        volume1 = view.findViewById(R.id.volume1);
+        currentPrice2 = view.findViewById(R.id.CurrentPrice2);
+        volume2 = view.findViewById(R.id.volume2);
+        currentPrice3 = view.findViewById(R.id.CurrentPrice3);
+        volume3 = view.findViewById(R.id.volume3);
         generateData();
     }
 
@@ -81,7 +106,8 @@ public class ChartFragment extends Fragment implements IAllView{
                 i = 0;
                 j = 0;
                 k = 0;
-
+                currentPrice2.setText(df.format(Double.parseDouble(response.body().getTrades().get(9).getRate())));
+                volume2.setText(response.body().getTrades().get(9).getAmount());
                 for(pricerespone.TradesBean tradesBean : response.body().getTrades()){
                     double x = i;
                     double y = Double.parseDouble(tradesBean.getRate());
@@ -89,13 +115,16 @@ public class ChartFragment extends Fragment implements IAllView{
                     values[i++] = v;
 
                 }
-
+                currentPrice1.setText(df.format(Double.parseDouble(response.body().getLowask().get(0).getRate())));
+                volume1.setText(response.body().getLowask().get(0).getAmount());
                 for(pricerespone.LowaskBean lowaskBean : response.body().getLowask()){
                     double x = j;
                     double y = Double.parseDouble(lowaskBean.getRate());
                     DataPoint v = new DataPoint(x, y);
                     values2[j++] = v;
                 }
+                currentPrice3.setText(df.format(Double.parseDouble(response.body().getHighbid().get(0).getRate())));
+                volume3.setText(response.body().getHighbid().get(0).getAmount());
                 for(pricerespone.HighbidBean highbidBean : response.body().getHighbid()){
                     double x = k;
                     double y = Double.parseDouble(highbidBean.getRate());
@@ -144,13 +173,6 @@ public class ChartFragment extends Fragment implements IAllView{
     private void sentdata(boolean b) {
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_chart, container, false);
-    }
-
 
     @Override
     public void onAttach(Context context) {
@@ -191,7 +213,7 @@ public class ChartFragment extends Fragment implements IAllView{
             }
         };
 //        mHandler.removeCallbacks(mTimer1);
-//        mHandler.postDelayed(mTimer1, 1000);
+          mHandler.postDelayed(mTimer1, 1000);
     }
 
     @Override

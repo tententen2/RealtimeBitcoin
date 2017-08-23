@@ -8,8 +8,9 @@
     tools:context="com.crop.jirawatpoo.bitcointickerrealtime.view.MainActivity">
 
 
+
     <FrameLayout
-        android:id="@+id/container_price"
+        android:id="@+id/container_graph"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -17,19 +18,16 @@
     </FrameLayout>
 
 
-    <FrameLayout
-        android:id="@+id/container_graph"
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
-        >
-    </FrameLayout>
-
-    <FrameLayout
-        android:id="@+id/container_admob"
-        android:layout_width="match_parent"
-        android:layout_height="60dp">
-
-    </FrameLayout>
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-6025281790827447/2221902845">
+    </com.google.android.gms.ads.AdView>
 
 
 </LinearLayout>
